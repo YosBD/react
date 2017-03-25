@@ -11,8 +11,7 @@
 
 'use strict';
 
-var { HostComponent } = require('ReactTypeOfWork');
-var { getNodeFromInstance, getInstanceFromNode } = require('EventPluginUtils');
+var {HostComponent} = require('ReactTypeOfWork');
 
 function getParent(inst) {
   if (inst._hostParent !== undefined) {
@@ -27,13 +26,8 @@ function getParent(inst) {
       // host node but that wouldn't work for React Native and doesn't let us
       // do the portal feature.
     } while (inst && inst.tag !== HostComponent);
-    // Going through the Host Node will guarantee that we get the "current"
-    // Fiber, instead of the alternate because that pointer is updated when
-    // props update.
-    // TODO: This is a bit hacky and possibly slow. We should ideally have
-    // something in the reconciler that allow us to do this safely.
     if (inst) {
-      return getInstanceFromNode(getNodeFromInstance(inst));
+      return inst;
     }
   }
   return null;
@@ -68,7 +62,7 @@ function getLowestCommonAncestor(instA, instB) {
   // Walk in lockstep until we find a match.
   var depth = depthA;
   while (depth--) {
-    if (instA === instB) {
+    if (instA === instB || instA === instB.alternate) {
       return instA;
     }
     instA = getParent(instA);
@@ -82,7 +76,7 @@ function getLowestCommonAncestor(instA, instB) {
  */
 function isAncestor(instA, instB) {
   while (instB) {
-    if (instB === instA) {
+    if (instA === instB || instA === instB.alternate) {
       return true;
     }
     instB = getParent(instB);
@@ -107,7 +101,7 @@ function traverseTwoPhase(inst, fn, arg) {
     inst = getParent(inst);
   }
   var i;
-  for (i = path.length; i-- > 0;) {
+  for (i = path.length; i-- > 0; ) {
     fn(path[i], 'captured', arg);
   }
   for (i = 0; i < path.length; i++) {
@@ -138,7 +132,7 @@ function traverseEnterLeave(from, to, fn, argFrom, argTo) {
   for (i = 0; i < pathFrom.length; i++) {
     fn(pathFrom[i], 'bubbled', argFrom);
   }
-  for (i = pathTo.length; i-- > 0;) {
+  for (i = pathTo.length; i-- > 0; ) {
     fn(pathTo[i], 'captured', argTo);
   }
 }

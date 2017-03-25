@@ -11,24 +11,17 @@
 
 'use strict';
 
-var ReactDOM = require('ReactDOM');
+var ReactDOM = require('react-dom');
 
-var ReactDOMUMDEntry = Object.assign({
-  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: {
-    ReactInstanceMap: require('ReactInstanceMap'),
-  },
-}, ReactDOM);
+var ReactDOMUMDEntry = ReactDOM;
 
 if (__DEV__) {
-  Object.assign(
-    ReactDOMUMDEntry.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED,
-    {
-      // ReactPerf and ReactTestUtils currently only work with the DOM renderer
-      // so we expose them from here, but only in DEV mode.
-      ReactPerf: require('ReactPerf'),
-      ReactTestUtils: require('ReactTestUtils'),
-    }
-  );
+  ReactDOMUMDEntry.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = {
+    // ReactPerf and ReactTestUtils currently only work with the DOM renderer
+    // so we expose them from here, but only in DEV mode.
+    ReactPerf: require('react-dom/lib/ReactPerf'),
+    ReactTestUtils: require('react-dom/lib/ReactTestUtils'),
+  };
 }
 
 module.exports = ReactDOMUMDEntry;
